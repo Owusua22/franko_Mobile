@@ -1,0 +1,55 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Custom font configuration */
+@layer base {
+  html {
+    font-family: 'Inter', system-ui, sans-serif;
+  }
+}
+
+/* Hide scrollbar in all browsers */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  -ms-overflow-style: none; /* IE and Edge */
+  scrollbar-width: none; /* Firefox */
+}
+
+/* Prevent horizontal scrolling and make app sticky on mobile */
+@layer base {
+  html, body {
+
+ 
+    width: 100%; /* Ensure full width */
+    height: 100%; /* Ensure full height */
+    margin: 0;
+    padding: 0;
+  }
+  
+  /* Main app container */
+  #root, .app-container {
+    width: 100vw;
+    height: 100vh;
+
+    overflow-y: auto; /* Allow vertical scrolling if needed */
+
+    top: 0;
+    left: 0;
+  }
+}
+
+/* Alternative approach using utility classes */
+@layer utilities {
+  .mobile-fixed {
+    @apply fixed inset-0 w-screen h-screen overflow-x-hidden overflow-y-auto;
+
+  }
+  .mobile-scroll {
+    @apply overflow-y-auto;
+  }
+  
+ 
+}
