@@ -1,5 +1,6 @@
-import { useEffect, useRef, useState, useCallback, useMemo } from "react";
+import { useEffect, useState, useRef, useCallback, useMemo } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
 import {
   HeartIcon as OutlineHeartIcon,
   HeartIcon as SolidHeartIcon,
@@ -9,14 +10,12 @@ import {
   ChevronRightIcon,
   ChevronLeftIcon,
 } from "@heroicons/react/24/solid";
-import { FaceFrownIcon } from "@heroicons/react/24/outline";
 import { fetchProductsByCategory } from "../Redux/Slice/productSlice";
+import useAddToCart from "./Cart";
 import {
   addToWishlist,
   removeFromWishlist,
 } from "../Redux/Slice/wishlistSlice";
-import useAddToCart from "./Cart";
-import { useNavigate } from "react-router-dom"; // ⬅️ ADD THIS LINE
 
 // Helpers
 const getValidImageUrl = (imagePath) => {
@@ -92,7 +91,7 @@ const SectionHeader = ({ title, emoji, onViewAll }) => (
         <h2 className="text-base sm:text-lg md:text-xl font-bold text-gray-900">
           {title}
         </h2>
-        <div className="absolute -bottom-1 left-0 h-[3px] w-10 rounded-full bg-gradient-to-r from-[#10b981] via-[#34d399] to-[#6ee7b7]" />
+        <div className="absolute -bottom-1 left-0 h-[3px] w-16 rounded-full bg-gradient-to-r from-[#10b981] via-[#34d399] to-[#6ee7b7]" />
         <div className="absolute -bottom-1.5 left-0 h-[8px] w-3/4 bg-[#10b981]/20 blur-sm rounded-full" />
       </div>
     </div>
@@ -119,7 +118,7 @@ const SectionHeader = ({ title, emoji, onViewAll }) => (
   </div>
 );
 
-// Product Card Component – UI like NewArrivals / Deals / BestSellers
+// Product Card Component – New UI like PhoneDeals/BestSellers
 const ProductCard = ({
   product,
   onWishlistToggle,
@@ -173,7 +172,7 @@ const ProductCard = ({
       "
     >
       {/* Image Section */}
-      <div className="relative h-[130px] bg-white flex items-center justify-center">
+      <div className="relative h-[130px] bg-[#f8f9fa] flex items-center justify-center">
         {/* Spinner while image loads */}
         {!imageLoaded && (
           <div className="absolute inset-0 flex items-center justify-center bg-[#f8f9fa]">
@@ -226,7 +225,7 @@ const ProductCard = ({
           </span>
         )}
 
-        {/* Wishlist Button */}
+        {/* Wishlist Button (bottom-right on image) */}
         <button
           onClick={handleWishlistClick}
           className="
@@ -310,7 +309,7 @@ const ProductCard = ({
   );
 };
 
-// Skeleton Loader – now fully gray
+// Skeleton Loader – matches new card shape
 const ProductSkeleton = () => (
   <div
     className="
@@ -334,38 +333,7 @@ const ProductSkeleton = () => (
   </div>
 );
 
-// Nice "No Products" Card with Icon
-const NoProductsCard = () => (
-  <div
-    className="
-      flex-shrink-0
-      w-full sm:w-[260px]
-      h-[190px]
-      bg-white
-      rounded-2xl
-      border border-dashed border-gray-300
-      flex flex-col items-center justify-center
-      gap-3
-      mx-auto
-      shadow-sm
-    "
-  >
-    <div className="w-14 h-14 rounded-full bg-gray-100 flex items-center justify-center shadow-inner">
-      <FaceFrownIcon className="w-8 h-8 text-gray-400" />
-    </div>
-    <div className="text-center space-y-1">
-      <p className="text-sm font-semibold text-gray-700">
-        No deals available right now
-      </p>
-      <p className="text-[11px] text-gray-500 max-w-xs mx-auto">
-        Check back soon for fresh mobile phone deals, or explore all phones in
-        our shop.
-      </p>
-    </div>
-  </div>
-);
-
-// View More Card
+// View More Card – same style as other sections
 const ViewMoreCard = ({ onPress, count }) => (
   <button
     onClick={onPress}
@@ -393,13 +361,12 @@ const ViewMoreCard = ({ onPress, count }) => (
   </button>
 );
 
-// Main PhoneDeals Component
+// Main Phone Deals Component
 const PhoneDeals = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const scrollRef = useRef(null);
-  const categoryId = "51d1fff2-7b71-46aa-9b34-2e553a40e921";
-
+    const categoryId = "51d1fff2-7b71-46aa-9b34-2e553a40e921";
   const { productsByCategory = {}, loading } = useSelector(
     (state) => state.products
   );
@@ -518,7 +485,6 @@ const PhoneDeals = () => {
   }, []);
 
   const shouldShowLoading = loading && sortedProducts.length === 0;
-  const noProducts = !loading && sortedProducts.length === 0;
 
   return (
     <>
@@ -532,14 +498,14 @@ const PhoneDeals = () => {
       <section className="w-full bg-white py-4 px-4">
         {/* Section Header */}
         <SectionHeader
-          title="Mobile Phones"
+          title="Mobile Phone Deals"
           onViewAll={() => navigate("/phones")}
         />
 
         {/* Products Carousel */}
         <div className="relative">
           {/* Left Arrow */}
-          {showLeftArrow && !noProducts && (
+          {showLeftArrow && (
             <button
               onClick={() => scroll("left")}
               className="
@@ -548,15 +514,15 @@ const PhoneDeals = () => {
                 bg-white/95 backdrop-blur-sm
                 rounded-full
                 shadow-lg
-                border border-gray-200
+                border border-[#10b981]/20
                 flex items-center justify-center
-                hover:bg-gray-50
-                hover:border-gray-300
+                hover:bg-[#f0fdf4]
+                hover:border-[#10b981]
                 active:scale-95
                 transition-all duration-200
               "
             >
-              <ChevronLeftIcon className="w-4 h-4 text-gray-500" />
+              <ChevronLeftIcon className="w-4 h-4 text-[#10b981]" />
             </button>
           )}
 
@@ -564,7 +530,7 @@ const PhoneDeals = () => {
           <div
             ref={scrollRef}
             className="
-              flex gap-3
+              flex gap-2.5
               overflow-x-auto
               scroll-smooth
               pb-2
@@ -572,22 +538,13 @@ const PhoneDeals = () => {
             "
             style={{ scrollSnapType: "x mandatory" }}
           >
-            {shouldShowLoading ? (
-              Array.from({ length: 6 }).map((_, idx) => (
-                <div key={idx} style={{ scrollSnapAlign: "start" }}>
-                  <ProductSkeleton />
-                </div>
-              ))
-            ) : noProducts ? (
-              <div
-                style={{ scrollSnapAlign: "start" }}
-                className="w-full flex justify-center"
-              >
-                <NoProductsCard />
-              </div>
-            ) : (
-              <>
-                {sortedProducts.map((product) => (
+            {shouldShowLoading
+              ? Array.from({ length: 6 }).map((_, idx) => (
+                  <div key={idx} style={{ scrollSnapAlign: "start" }}>
+                    <ProductSkeleton />
+                  </div>
+                ))
+              : sortedProducts.map((product) => (
                   <div
                     key={product.productID}
                     style={{ scrollSnapAlign: "start" }}
@@ -603,21 +560,19 @@ const PhoneDeals = () => {
                   </div>
                 ))}
 
-                {/* View More Card */}
-                {sortedProducts.length > 0 && (
-                  <div style={{ scrollSnapAlign: "start" }}>
-                    <ViewMoreCard
-                      onPress={() => navigate("/phones")}
-                      count={extraCount}
-                    />
-                  </div>
-                )}
-              </>
+            {/* View More Card */}
+            {!shouldShowLoading && sortedProducts.length > 0 && (
+              <div style={{ scrollSnapAlign: "start" }}>
+                <ViewMoreCard
+                  onPress={() => navigate("/computers")}
+                  count={extraCount}
+                />
+              </div>
             )}
           </div>
 
           {/* Right Arrow */}
-          {showRightArrow && !noProducts && (
+          {showRightArrow && (
             <button
               onClick={() => scroll("right")}
               className="
@@ -626,22 +581,22 @@ const PhoneDeals = () => {
                 bg-white/95 backdrop-blur-sm
                 rounded-full
                 shadow-lg
-                border border-gray-200
+                border border-[#10b981]/20
                 flex items-center justify-center
-                hover:bg-gray-50
-                hover:border-gray-300
+                hover:bg-[#f0fdf4]
+                hover:border-[#10b981]
                 active:scale-95
                 transition-all duration-200
               "
             >
-              <ChevronRightIcon className="w-4 h-4 text-gray-500" />
+              <ChevronRightIcon className="w-4 h-4 text-[#10b981]" />
             </button>
           )}
         </div>
 
         {/* Divider */}
         <div className="mt-5 flex justify-center">
-          <div className="h-px w-1/3 bg-gradient-to-r from-transparent via-gray-200 to-transparent" />
+          <div className="h-px w-1/3 bg-gradient-to-r from-transparent via-[#10b981]/20 to-transparent" />
         </div>
       </section>
 
